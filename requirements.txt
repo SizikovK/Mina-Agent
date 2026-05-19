@@ -1,3 +1,6 @@
 aiogram
 openai
 python-dotenv
+langchain
+langchain_openai
+langgraph
