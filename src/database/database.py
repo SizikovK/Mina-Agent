@@ -1,4 +1,10 @@
 import sqlite3
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DB_PATH = os.getenv("DATABASE_PATH")
 
 def init_db(db_path: str):
     with sqlite3.connect(db_path) as con:
@@ -39,4 +45,20 @@ def init_db(db_path: str):
             END;          
         ''')
 
+        con.commit()
+
+def create_session() -> int:
+    with sqlite3.connect(DB_PATH) as con:
+        cursor = con.cursor()
+        cursor.execute("INSERT INTO sessions DEFAULT VALUES")
+        con.commit()
+        return cursor.lastrowid()
+
+def add_message(session_id: int, role: str, text: str):
+    with sqlite3.connect(DB_PATH) as con:
+        cursor = con.cursor()
+        cursor.execute(
+            "INSERT INTO messages (session_id, role, text) VALUES (?, ?, ?)",
+            (session_id, role, text)
+        )
         con.commit()
