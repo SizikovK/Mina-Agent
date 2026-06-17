@@ -9,7 +9,7 @@ delay = 3
 
 
 @router.message(F.text)
-async def test_handler(message: types.Message):
+async def text_handler(message: types.Message):
     #await asyncio.sleep(3)
 
     if not message.text:
