@@ -1,41 +1,10 @@
 from langchain_core.tools import tool
 import json
 from requests import get
+from dotenv import load_dotenv
+import os
 
-@tool
-def multiply(a: int, b: int) -> int:
-    """Multiply `a` and `b`.
-
-    Args:
-        a: First int
-        b: Second int
-    """
-    return a * b
-
-
-@tool
-def add(a: int, b: int) -> int:
-    """Adds `a` and `b`.
-
-    Args:
-        a: First int
-        b: Second int
-    """
-    return a + b
-
-
-@tool
-def divide(a: int, b: int) -> float:
-    """Divide `a` and `b`.
-
-    Args:
-        a: First int
-        b: Second int
-    """
-    return a / b
-
-
-
+load_dotenv()
 
 @tool
 def parce_cryptocurrencies(cryptocurrency: str, count: int) -> str:
@@ -49,7 +18,7 @@ def parce_cryptocurrencies(cryptocurrency: str, count: int) -> str:
         str: Информация о криптовалютах или сообщение об ошибке.
     '''
 
-    API_KEY = "9f6da3a3c905461e9d0eb20049bc2f6e"
+    API_KEY = os.getenv("COINMARKETCAP_API_KEY", "your_api_key_here")
     count = str(count)
     convert = "USD"
     params = f"?start=1&limit={count}&convert={convert}"
@@ -95,7 +64,7 @@ def parce_weather(city: str) -> str:
         str: Информация о погоде или сообщение об ошибке.
     '''
 
-    API_KEY = "4af81f1d5c223163c511122479330934"
+    API_KEY = os.getenv("OPENWEATHERMAP_API_KEY", "your_api_key_here")
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
     
     try:
@@ -128,4 +97,4 @@ def parce_weather(city: str) -> str:
     finally:
         return response
 
-TOOLS = [multiply, add, divide, parce_cryptocurrencies, parce_weather]
+TOOLS = [parce_cryptocurrencies, parce_weather]
