@@ -1,24 +1,34 @@
-from langchain_openai import ChatOpenAI
 import os
 from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
+from langchain_ollama import ChatOllama
 
 load_dotenv()
 
 def create_llm():
-    api_key = os.getenv("LLM_API_KEY")
-    base_url = os.getenv("BASE_URL")
-    model = os.getenv("MODEL")
-    temperature = float(os.getenv("TEMPERATURE", 0))
+    provider = os.getenv("LLM_PROVIDER", "ollama").lower()
+    model = os.getenv("LLM_MODEL", "llama3.1")
+    temperature = float(os.getenv("LLM_TEMPERATURE", "0"))
+    api_key = os.getenv("LLM_API_KEY", "")
+    base_url = os.getenv("BASE_URL", "http://localhost:11434")
 
-    if not api_key:
-        raise ValueError("LLM_API_KEY is not set")
-    if not model:
-        raise ValueError("MODEL is not set")
+    if provider == "openai":
+        return ChatOpenAI(
+            api_key=api_key,
+            base_url=base_url,
+            model=model,
+            temperature=temperature,
+            default_headers={
+                "HTTP-Referer": "https://localhost", 
+                "X-Title": "LangChain App"
+            }
+        )
 
-    return ChatOpenAI(
-        api_key=api_key,
-        base_url=base_url,
-        model=model,
-        temperature=temperature,
-        timeout=65
-    )
+    if provider == "ollama":
+        return ChatOllama(
+            model=model,
+            temperature=temperature,
+            base_url=base_url
+        )
+
+    raise ValueError(f"Неизвестный провайдер: {provider}")

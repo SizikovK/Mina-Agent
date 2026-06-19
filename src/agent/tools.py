@@ -127,3 +127,5 @@ def parce_weather(city: str) -> str:
     
     finally:
         return response
+
+TOOLS = [multiply, add, divide, parce_cryptocurrencies, parce_weather]
